@@ -17,9 +17,7 @@ class Map {
 
       while (i < antall) {
         if(key[i] == k) {
-          cout << "\nindex: " << i; 
           return i;
-          break;
         }
         i++;
       }
@@ -41,10 +39,19 @@ class Map {
     bool empty() {return antall == 0;}
 
     void push(const Key k, const T t) {
+      int nyIndex = 0;
+      
       if(antall < kapasitet) {
         if(!findKey(k)) {
-          key[antall] = k; 
-          data[antall] = t;
+          while(nyIndex < antall && k > key[nyIndex]) { // ! Finner indexen som passer
+            nyIndex++;
+          }
+          for(int i = antall; i > nyIndex; i--) { // ! Sorter! 
+              key[i] = key[i - 1];
+              data[i] = data[i - 1];
+          }            
+          key[nyIndex] = k; 
+          data[nyIndex] = t;
           antall++; 
         } else
             cout << "\nKey already exist!\n";
@@ -66,15 +73,13 @@ class Map {
       if(keyIndex) {
         return data[keyIndex];
       } 
-      return T();
     }
 
     void put(const Key k, const T t) {
       int keyIndex; 
       if(!empty()) {
-        keyIndex = getKeyIndex(k);       
-        if(keyIndex > 0) {
-          cout << "\nGot index: " << keyIndex << endl;
+        keyIndex = getKeyIndex(k);     
+        if(keyIndex >= 0) {
           data[keyIndex] = t; 
         } else
             cout << "\nKey does not exist\n";
@@ -95,15 +100,22 @@ class Map {
               newKey[i] = key[i];
               newData[i] = data[i];
             }
+            else {
+              for(int j = i + 1;  j < antall; j++) {
+                  newKey[j - 1] = key[j];
+                  newData[j - 1] = data[j];
+              }
+              break;
+            }
           }
-          antall--;
+
           delete [] key;  
           delete [] data;
-
           key = newKey; 
           data = newData;
+          antall--;
         } else
-          cout << "\nKey not found!\n";
+            cout << "\nKey not found!\n";
       } else
           cout << "\nMap empty!\n";
     }
@@ -112,13 +124,19 @@ class Map {
 
 int main() {
   Map<string, string> m;
-  m.push("Gjovik", "Nyligst");
-  m.push("Levanger", "First & Best");
-  m.push("Trondheim", "Master");
-  m.push("Oslo", "Jobss");
+  m.push("C", "CCCC");
+  m.push("B", "BBBB");
+  m.push("A", "AAAA");
+  m.push("G", "GGGG");
+  m.push("H", "HHHH");
+  m.push("X", "XXXX");
+  m.push("T", "TTTT");
+  m.push("E", "EEEE");
+  m.push("L", "LLLL");
   m.display();
-  m.remove("Oslo");
-  m.remove("Levanger");
+  m.remove("C");
+  m.display();
+  m.remove("T");
   m.display();
   return 0;
 }
